@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interaction</title>
+    <script>
+        // Get the CSRF token from the template
+        const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+        // Function to interact with the Chatbot
+        function interactWithChatbot() {
+            const userQuestion = document.getElementById("user-question").value;
+
+            // Your JSON data
+            const data = { question: userQuestion };
+
+            fetch("/appname/ask_question/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken,  // Include the CSRF token in the headers
+                },
+                body: JSON.stringify(data),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                // Display the Chatbot's response
+                document.getElementById("chatbot-response").innerText = data.response;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Chatbot Interaction</h1>
+    <div>
+        <label for="user-question">Your Question:</label>
+        <input type="text" id="user-question">
+        <button onclick="interactWithChatbot()">Ask</button>
+    </div>
+    <div>
+        <h2>Chatbot Response:</h2>
+        <p id="chatbot-response"></p>
+    </div>
+    <!-- Include the CSRF token within the form -->
+    <form>
+        {% csrf_token %}
+    </form>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot Interaction</title>
+</head>
+<body>
+    <h1>Chatbot Interaction</h1>
+    <div>
+        <label for="user-question">Your Question:</label>
+        <input type="text" id="user-question">
+        <button onclick="askQuestion()">Ask</button>
+    </div>
+    <div>
+        <h2>Chatbot Response:</h2>
+        <p id="chatbot-response"></p>
+    </div>
+</body>
+<script>
+    const csrf_token = "{{ csrf_token }}";
+    function askQuestion() {
+        const userQuestion = document.getElementById("user-question").value;
+        fetch('/appname/ask_question/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrf_token,
+            },
+            body: `question=${userQuestion}`,
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('chatbot-response').textContent = data.response;
+
+            // Access server data and print it to the console
+            const serverData = JSON.parse(data.server_data);
+            console.log('Server Data:', serverData);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+</script>
+</html>
