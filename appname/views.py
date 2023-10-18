@@ -13,7 +13,7 @@ from .models import Chat
 import json
 import logging
 
-os.environ['OPENAI_API_KEY'] = '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'
+os.environ['OPENAI_API_KEY'] = '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'
 
 pdf_link="./data.pdf"
 
