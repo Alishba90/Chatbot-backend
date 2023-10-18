@@ -1,9 +1,9 @@
 
 
 from django.urls import path
-from .views import chatbot_api,alishbafunction
+from .views import alishbafunction
 
 urlpatterns = [
-    path('chatbot/', chatbot_api, name='chatbot_api'),
+    
     path('alishba/', alishbafunction, name='alishbafunction'),
 ]
