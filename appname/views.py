@@ -8,12 +8,19 @@ from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA
-from django.http import JsonResponse
 from .models import Chat
 import json
 import logging
+from dotenv import load_dotenv
 
-os.environ['OPENAI_API_KEY'] = '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'
+# Find the .env file and load the environment variables
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
+# Access the environment variables
+OPENAI_KEY = os.getenv('OPENAI_API_KEY')
+
+os.environ['OPENAI_API_KEY'] = OPENAI_KEY
 
 pdf_link="./data.pdf"
 
@@ -33,7 +40,7 @@ llm = ChatOpenAI(model_name='gpt-3.5-turbo')
 qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
 
 @csrf_exempt
-def alishbafunction(request):
+def chat_function(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         
@@ -44,7 +51,7 @@ def alishbafunction(request):
             
             logger = logging.getLogger(__name__)
             response=re['result']
-            logger.info(f'Response: {response}')
+            logger.info(response)
             
         except Exception as err:
             response="Error "+str(err)
