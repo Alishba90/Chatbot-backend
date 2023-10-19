@@ -22,18 +22,16 @@ OPENAI_KEY = os.getenv('OPENAI_API_KEY')
 
 os.environ['OPENAI_API_KEY'] = OPENAI_KEY
 
-pdf_link="./data.pdf"
+pdf_link = "./dataset.pdf"
 
 # PDF processing and model initialization
-loader = PyMuPDFLoader("./data.pdf")
+loader = PyMuPDFLoader(pdf_link)
 documents = loader.load()
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=550, chunk_overlap=10)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=700, chunk_overlap=10)  # Adjusted chunk_size to resolve the batch size error
 texts = text_splitter.split_documents(documents)
 persist_directory = "./storage"
 embeddings = OpenAIEmbeddings()
-vectordb = Chroma.from_documents(documents=texts,
-                                 embedding=embeddings,
-                                 persist_directory=persist_directory)
+vectordb = Chroma.from_documents(documents=texts, embedding=embeddings, persist_directory=persist_directory)
 vectordb.persist()
 retriever = vectordb.as_retriever()
 llm = ChatOpenAI(model_name='gpt-3.5-turbo')
@@ -50,11 +48,11 @@ def chat_function(request):
             re = qa(query)
             
             logger = logging.getLogger(__name__)
-            response=re['result']
+            response = re['result']
             logger.info(response)
             
         except Exception as err:
-            response="Error "+str(err)
+            response = "Error " + str(err)
 
         
         chat = Chat.objects.create(query=query, response=response)
